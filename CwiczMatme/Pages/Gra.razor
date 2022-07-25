@@ -1,0 +1,103 @@
+@page "/gra"
+@using CwiczMatme.Gameplay
+<PageTitle>gierka</PageTitle>
+
+@if(poka)
+{
+  <h2>@alert </h2>
+ <div class="container text-center">
+  <div class="row">
+    <div class="col order-first">
+        <ul class="list-group">
+          <li class="list-group-item">
+            <input class="form-check-input me-1" type="checkbox" @bind="@opcje[0]">
+            Dodawanie
+          </li>
+          <li class="list-group-item">
+            <input class="form-check-input me-1" type="checkbox" @bind="@opcje[1]">
+            Odejmowanie
+          </li>
+          <li class="list-group-item">
+            <input class="form-check-input me-1" type="checkbox" @bind="@opcje[2]">
+            Mnożenie
+          </li>
+          <li class="list-group-item">
+            <input class="form-check-input me-1" type="checkbox" @bind="@opcje[3]">
+            Dzielenie
+          </li>
+
+        </ul>
+    </div>
+    <div class="col order-last">
+        <button class="btn btn-primary" @onclick="ZmienTekst">Rozpocznij</button>
+    </div>
+  </div>
+</div>
+
+}
+@if(!poka)
+{
+  <div class="container">
+  <div class="row">
+    <div class="col order-first text-end">
+      <h3>@rownanie = </h3>
+    </div>
+    <div class="col order-last text-start">
+      <input @bind="wartoscUsera" @onkeyup="@Enter" type="number"/>
+      <button class="btn btn-primary" @onclick="Zatwierdz"> Zatwierdź</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class = "col text-center">
+      Twoje punkty: @licznik
+    </div>
+  </div>
+</div>
+
+}
+
+@code{
+    double? wartoscUsera;
+    double odp;
+    Dzialania dzialanie = new Dzialania();
+    string rownanie="", alert="";
+    bool[] opcje = new bool[4];
+    bool flaga = true;
+    bool poka =true;
+    int licznik = 0;
+    private void Zatwierdz()
+    {
+      dzialanie.UserInput = wartoscUsera;
+      odp = dzialanie.PodajWynik(rownanie);
+      licznik = dzialanie.Punkty;
+      rownanie = dzialanie.StworzDzialanie();
+      wartoscUsera=null;
+    }
+    private void ZmienTekst()
+    {
+      if(IsNotEmpty(opcje))
+      {
+        dzialanie.Opcje = opcje;
+        rownanie = dzialanie.StworzDzialanie();
+        poka = false;
+      }
+      else
+      alert = "Musisz wybrać przynajmniej jedną opcję";
+    }
+    public void Enter(KeyboardEventArgs e)
+    {
+    if (e.Code == "Enter" || e.Code == "NumpadEnter")
+      {
+        Zatwierdz();
+      }
+    }
+    private bool IsNotEmpty(bool[] tab)
+    {
+      foreach(bool temp in tab)
+      {
+        if(temp)
+        return true;
+      }
+      return false;
+    }
+}
